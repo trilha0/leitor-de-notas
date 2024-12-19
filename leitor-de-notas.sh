@@ -1,12 +1,14 @@
 #!/bin/bash
 #
-# Version.: 202412181310
+# Version.: 202412191730
 # Creation: 11-12-2024
 # Author..: braga[dot]marcos[at]gmail[dot]com
 #
 # Variables -----------------------------------------------
 this_file=$(basename -s .sh $0)
-this_file_aux=$this_file.aux
+file_aux0=$this_file.aux0
+file_aux1=$this_file.aux1
+file_aux2=$this_file.aux2
 file_pdf=${1}
 dev_null=/dev/null
 # ---------------------------------------------------------
@@ -34,55 +36,71 @@ function verifyApp {
   fi
 $ret
 }
-
+# Function to export Buy data ---------------------------------------------------------------------
+function exportBuy {
+  local _file_in=${1}
+  if grep -q Buy $_file_in; then
+    local _columnA=$(awk -F"Buy" '/Buy/ {print $1}' $_file_in | awk '{print $1,"C"}')
+    # v1 before 11-2024
+    #local _columnB=$(awk -F"Buy" '/Buy/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
+    # v2 after 11-2024
+    local _columnB=$(awk -F"Buy" '/Buy/ {print $2}' $_file_in | awk '{print $3,$4,$5}' | sed 's/\./\,/g')
+    paste <(echo "$_columnA") <(echo "$_columnB") --delimiters " "
+  fi
+}
+# -------------------------------------------------------------------------------------------------
+# Function to export Sell data --------------------------------------------------------------------
+function exportSell {
+  local _file_in=${1}
+  if grep -q Sell $_file_in; then
+    local _columnA=$(awk -F"Sell" '/Sell/ {print $1}' $_file_in | awk '{print $1,"V"}')
+    # v1 before 11-2024
+    #local _columnB=$(awk -F"Sell" '/Sell/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
+    # v2 after 11-2024
+    local _columnB=$(awk -F"Sell" '/Sell/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
+    paste <(echo "$_columnA") <(echo "$_columnB") --delimiters " "
+  fi
+}
+# -------------------------------------------------------------------------------------------------
 if verifyApp poppler-utils; then
-  # Converting pdf file to text file
+  # Converting pdf file to text file --------------------------------------------------------------
   pdftotext -layout -nopgbrk $file_pdf
-  # Removing bad caracthers -----------------------------
-  strings $file_txt > $this_file_aux && mv $this_file_aux $file_txt
-  # Validating NOMAD file
+  # Removing bad caracthers -----------------------------------------------------------------------
+  strings $file_txt > $file_aux0 && mv $file_aux0 $file_txt
+  # Validating NOMAD file -------------------------------------------------------------------------
   file_txt_head=$(head -n1 $file_txt | sed 's/\ //g')
   if [ "NOMAD" == "$file_txt_head" ]; then
     # Get Buy and Sell events ---------------------------------------------------------------------
-    awk '/(Buy|Sell)/' $file_txt > $this_file_aux && mv $this_file_aux $file_txt
-    # [BUY] Extracting stocks names
-    awk -F"Buy" '/Buy/ {print $1}' $file_txt | awk '{print $1,"C"}' > aux1
-    # [BUY] Extracting stocks data v1 before 11/2024
-    #awk -F"Buy" '/Buy/ {print $2}' $file_txt | awk '{print $1,$2,$3}' | sed 's/\./\,/g' > aux2
-    # [BUY] Extracting stocks data v2
-    awk -F"Buy" '/Buy/ {print $2}' $file_txt | awk '{print $3,$4,$5}' | sed 's/\./\,/g' > aux2
-    # [BUY] Join stock names and data
-    > data.txt paste aux1 aux2
-    # [SELL] Extracting stocks names
-    awk -F"Sell" '/Sell/ {print $1}' $file_txt | awk '{print $1,"V"}' > aux1
-    # [SELL] Extracting stocks data v1 before 11/2024
-    #awk -F"Sell" '/Sell/ {print $2}' $file_txt | awk '{print $1,$2,$3}' | sed 's/\./\,/g' > aux2
-    # [SELL] Extracting stocks data v2
-    awk -F"Sell" '/Sell/ {print $2}' $file_txt | awk '{print $3,$4,$5}' | sed 's/\./\,/g' > aux2
-    # [SELL] Join stock names and data
-    >> data.txt paste aux1 aux2
-    while read STK OPE VLR PRC DTE; do
-      # Ajust date to BR
-      day=$(echo $DTE | cut -d"/" -f2) && [ $day -lt 10 ] && day=0$day
-      month=$(echo $DTE | cut -d"/" -f1) && [ $month -lt 10 ] && month=0$month
-      year=$(echo $DTE | cut -d"/" -f3)
-      DTE=${day}/${month}/${year}
-      echo -e "$STK;$DTE;$OPE;$VLR;$PRC;0,00;NOMAD;0,00;USD"
+    awk '/(Buy|Sell)/' $file_txt > $file_aux0 && mv $file_aux0 $file_txt
+    # Extracting Buy data -------------------------------------------------------------------------
+    > data.txt exportBuy $file_txt
+    # extracting Sell data ------------------------------------------------------------------------
+    >> data.txt exportSell $file_txt
+    # Formating data out --------------------------------------------------------------------------
+    while read _stock _operation _value _price _date; do
+      # Ajust date to BR --------------------------------------------------------------------------
+      _day=$(echo $_date | cut -d"/" -f2) && [ $_day -lt 10 ] && _day=0$_day
+      _month=$(echo $_date | cut -d"/" -f1) && [ $_month -lt 10 ] && _month=0$_month
+      _year=$(echo $_date | cut -d"/" -f3)
+      _date=${_day}/${_month}/${_year}
+      # Data out ----------------------------------------------------------------------------------
+      echo "Converting $file_pdf"
+      echo -e "$_stock;$_date;$_operation;$_value;$_price;0,00;NOMAD;0,00;USD"
     done < data.txt
     resultado="Done"
   else
-  	resultado="Nao e um arquivo NOMAD"
+    resultado="This is not a NOMAD file"
   fi
 else
-  resultado="poppler-utils not found, please install first."
+  resultado="poppler-utils not found, please install it first."
 fi
 
 echo $resultado
 
 # Ending
-[ -f $this_file_aux ] && rm $this_file_aux
-[ -f aux1 ] && rm aux1
-[ -f aux2 ] && rm aux2
+[ -f $file_aux0 ] && rm $file_aux0
+[ -f $file_aux1 ] && rm $file_aux1
+[ -f $file_aux2 ] && rm $file_aux2
 [ -f data.txt ] && rm data.txt
 [ -f $file_txt ] && rm $file_txt
 exit 0
