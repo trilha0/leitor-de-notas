@@ -3,6 +3,7 @@ Leitor de notas de corretagem para importar em planilhas
 
 # Padrões Usados nesse Documento
 Nota de Corretagem = NC
+
 Notas de Corretagem = NCs
 
 # Histórico
