@@ -42,9 +42,6 @@ function exportBuy {
   local _file_in=${1}
   if grep -q Buy $_file_in; then
     local _columnA=$(awk -F"Buy" '/Buy/ {print $1}' $_file_in | awk '{print $1,"C"}')
-    # v1 before 11-2024
-    #local _columnB=$(awk -F"Buy" '/Buy/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
-    # v2 after 11-2024
     local _columnB=$(awk -F"Buy" '/Buy/ {print $2}' $_file_in | awk '{print $3,$4,$5}' | sed 's/\./\,/g')
     paste <(echo "$_columnA") <(echo "$_columnB") --delimiters " "
   fi
@@ -55,9 +52,6 @@ function exportSell {
   local _file_in=${1}
   if grep -q Sell $_file_in; then
     local _columnA=$(awk -F"Sell" '/Sell/ {print $1}' $_file_in | awk '{print $1,"V"}')
-    # v1 before 11-2024
-    #local _columnB=$(awk -F"Sell" '/Sell/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
-    # v2 after 11-2024
     local _columnB=$(awk -F"Sell" '/Sell/ {print $2}' $_file_in | awk '{print $1,$2,$3}' | sed 's/\./\,/g')
     paste <(echo "$_columnA") <(echo "$_columnB") --delimiters " "
   fi
