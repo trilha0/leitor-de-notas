@@ -13,6 +13,7 @@ Notas de Corretagem = NCs
 Nessa primeira versão está lendo e convertendo somente NCs da Nomad.
 
 A Nomad modificou suas NCs a partir do mês 11/2024, o que gerou uma atualização no script, portanto deve-se validar a data da NC antes da execução do script.
+Usar a versão 1 para NCs até 11/2024 e a versão 2 para NCs posteriores.
 
 # Continuidade
 O objetivo principal foi criar uma saída da NC para inserir dados na planilha do dlombello, portanto o padrão atual está descrito abaixo:
