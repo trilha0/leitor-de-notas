@@ -20,7 +20,7 @@ Exemplo
 
 AMT;12/11/2024;C;0,08286342;193,0888;0,00;NOMAD;0,00;USD
 
-
-Eu criei a nota de corretagem para a Nomad porque é o único banco que tenho esse tipo de documento.
-
-Caso precisem extrair dados de notas de corretagem de outras casas de investimento, favor compartilhar para análise.
+# Observações
+1. Eu criei a nota de corretagem para a Nomad porque é o único banco que tenho esse tipo de documento;
+2. Caso precisem extrair dados de NC de outras casas de investimento, favor compartilhar para análise;
+3. Caso precise extrair dados para outros fins, favor compartilhar para análise.
