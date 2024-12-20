@@ -14,7 +14,12 @@ A Nomad modificou suas NCs a partir do mês 11/2024, o que gerou uma atualizaç�
 # Continuidade
 O objetivo principal foi criar uma saída da NC para inserir dados na planilha do dlombello, portanto o padrão atual está descrito abaixo:
 
-STOCK;
+AÇÃO;DATA;(C|V);VALOR;PREÇO;FIXO(0,00);FIXO(NOMAD);FIXO(0,00);FIXO(USD)
+
+Exemplo
+
+AMT;12/11/2024;C;0,08286342;193,0888;0,00;NOMAD;0,00;USD
+
 
 Eu criei a nota de corretagem para a Nomad porque é o único banco que tenho esse tipo de documento.
 
