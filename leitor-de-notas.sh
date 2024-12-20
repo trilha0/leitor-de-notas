@@ -76,7 +76,8 @@ if verifyApp poppler-utils; then
     > data.txt exportBuy $file_txt
     # extracting Sell data ------------------------------------------------------------------------
     >> data.txt exportSell $file_txt
-    # Formating data out --------------------------------------------------------------------------
+    # Data out ------------------------------------------------------------------------------------
+    echo "Converting $file_pdf"
     while read _stock _operation _value _price _date; do
       # Ajust date to BR --------------------------------------------------------------------------
       _day=$(echo $_date | cut -d"/" -f2) && [ $_day -lt 10 ] && _day=0$_day
@@ -84,7 +85,6 @@ if verifyApp poppler-utils; then
       _year=$(echo $_date | cut -d"/" -f3)
       _date=${_day}/${_month}/${_year}
       # Data out ----------------------------------------------------------------------------------
-      echo "Converting $file_pdf"
       echo -e "$_stock;$_date;$_operation;$_value;$_price;0,00;NOMAD;0,00;USD"
     done < data.txt
     resultado="Done"
