@@ -9,6 +9,7 @@ this_file=$(basename -s .sh $0)
 file_aux0=$this_file.aux0
 file_aux1=$this_file.aux1
 file_aux2=$this_file.aux2
+file_data=$this_file.data
 file_pdf=${1}
 dev_null=/dev/null
 # ---------------------------------------------------------
@@ -73,9 +74,9 @@ if verifyApp poppler-utils; then
     # Get Buy and Sell events ---------------------------------------------------------------------
     awk '/(Buy|Sell)/' $file_txt > $file_aux0 && mv $file_aux0 $file_txt
     # Extracting Buy data -------------------------------------------------------------------------
-    > data.txt exportBuy $file_txt
+    > ${file_data} exportBuy $file_txt
     # extracting Sell data ------------------------------------------------------------------------
-    >> data.txt exportSell $file_txt
+    >> ${file_data} exportSell $file_txt
     # Data out ------------------------------------------------------------------------------------
     echo "Converting $file_pdf"
     while read _stock _operation _value _price _date; do
@@ -86,7 +87,7 @@ if verifyApp poppler-utils; then
       _date=${_day}/${_month}/${_year}
       # Data out ----------------------------------------------------------------------------------
       echo -e "$_stock;$_date;$_operation;$_value;$_price;0,00;NOMAD;0,00;USD"
-    done < data.txt
+    done < ${file_data}
     resultado="Done"
   else
     resultado="This is not a NOMAD file"
@@ -101,7 +102,7 @@ echo $resultado
 [ -f $file_aux0 ] && rm $file_aux0
 [ -f $file_aux1 ] && rm $file_aux1
 [ -f $file_aux2 ] && rm $file_aux2
-[ -f data.txt ] && rm data.txt
+[ -f ${file_data} ] && rm ${file_data}
 [ -f $file_txt ] && rm $file_txt
 exit 0
 # ---------------------------------------------------------
