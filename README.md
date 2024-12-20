@@ -6,6 +6,9 @@ Nota de Corretagem = NC
 
 Notas de Corretagem = NCs
 
+# Requisitos
+É necessário o pacote poppler-utils instalado
+
 # Histórico
 Nessa primeira versão está lendo e convertendo somente NCs da Nomad.
 
