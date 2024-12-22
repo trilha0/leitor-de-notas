@@ -19,11 +19,11 @@ Usar a versão 1 para NCs até 11/2024 e a versão 2 para NCs posteriores.
 # Continuidade
 O objetivo principal foi criar uma saída da NC para inserir dados na planilha do dlombello, portanto o padrão atual está descrito abaixo:
 
-AÇÃO;DATA;(C|V);VALOR;PREÇO;FIXO(0,00);FIXO(NOMAD);FIXO(0,00);FIXO(USD)
+`AÇÃO;DATA;(C|V);VALOR;PREÇO;FIXO(0,00);FIXO(NOMAD);FIXO(0,00);FIXO(USD)`
 
-Exemplo
+Exemplo de saída para importar na planilha delombello
 
-AMT;12/11/2024;C;0,08286342;193,0888;0,00;NOMAD;0,00;USD
+`AMT;12/11/2024;C;0,08286342;193,0888;0,00;NOMAD;0,00;USD`
 
 # Observações
 1. Eu criei a nota de corretagem para a Nomad porque é o único banco que tenho esse tipo de documento;
